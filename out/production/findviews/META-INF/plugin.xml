@@ -2,7 +2,7 @@
   <id>com.zhoug.plugin.android.findviews</id>
   <name>findviews</name>
   <version>1.0</version>
-  <vendor email="564169392@qq.com" url="http://www.zhoug.com">zhoug</vendor>
+  <vendor email="564169392@qq.com" url="https://github.com/zhougan870822/findviews">zhoug</vendor>
 
   <description><![CDATA[
      <li>this plugin use for android stdio</li>
