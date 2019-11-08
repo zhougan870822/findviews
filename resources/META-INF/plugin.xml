@@ -1,0 +1,42 @@
+<idea-plugin>
+  <id>com.zhoug.plugin.android.findviews</id>
+  <name>findviews</name>
+  <version>1.0</version>
+  <vendor email="564169392@qq.com" url="http://www.zhoug.com">zhoug</vendor>
+
+  <description><![CDATA[
+     <li>this plugin use for android stdio</li>
+     <li>generate findViewById code </li>
+     <li>support  android library</li>
+     <li>author is zhoug</li>
+    ]]></description>
+
+  <change-notes><![CDATA[
+     <li>this plugin use for android stdio</li>
+     <li>generate findViewById code </li>
+     <li>support  android library</li>
+    ]]>
+  </change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="173.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+    <action id="com.zhoug.plugin.android.findviews" class="com.zhoug.plugin.android.actions.FindViewsAction" text="findviews"
+            description="findviewbyid for android studio ,id is defind in layout xml">
+      <add-to-group group-id="GenerateGroup" anchor="last"/>
+    </action>
+  </actions>
+
+</idea-plugin>
