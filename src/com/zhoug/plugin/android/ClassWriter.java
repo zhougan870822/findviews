@@ -1,5 +1,7 @@
 package com.zhoug.plugin.android;
 
+import com.intellij.lang.jvm.JvmClassKind;
+import com.intellij.lang.jvm.types.JvmReferenceType;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
@@ -7,6 +9,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.zhoug.plugin.android.beans.ResIdBean;
+import com.zhoug.plugin.android.utils.PsiClassUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -26,6 +29,8 @@ public class ClassWriter {
 
     public static boolean API26 = true;
     public static boolean prefixM = true;
+
+    private PsiClassUtils mPsiClassUtils;
 
 
     public ClassWriter(Project project, PsiFile psiFile) {
@@ -139,28 +144,28 @@ public class ClassWriter {
             for (ResIdBean resIdBean : resIdBeanList) {
                 String findViewById = createFindViewById(resIdBean, addParams);
 //                System.out.println("findViewById="+findViewById);
-                boolean created=false;
+                boolean created = false;
                 //判断是否已经有代码findViewById
-                PsiStatement createPsiStatement=null;
-                for(PsiStatement  psiStatement :statements){
+                PsiStatement createPsiStatement = null;
+                for (PsiStatement psiStatement : statements) {
                     String text = psiStatement.getText().trim().replace(" ", "");
-                    if(text.contains(findViewById)){
-                        createPsiStatement=psiStatement;
-                        created=true;
-                        System.out.println("有代码:"+psiStatement.getText());
+                    if (text.contains(findViewById)) {
+                        createPsiStatement = psiStatement;
+                        created = true;
+                        System.out.println("有代码:" + psiStatement.getText());
                         break;
                     }
                 }
 
                 //需要创建findViewById
-                if(resIdBean.isSelect() && !created){
+                if (resIdBean.isSelect() && !created) {
                     PsiStatement statementFromText = _psiElementFactory.createStatementFromText(findViewById, body);
                     body.add(statementFromText);
-                    System.out.println("需要创建:"+findViewById);
-                }else if(!resIdBean.isSelect() && created){
+                    System.out.println("需要创建:" + findViewById);
+                } else if (!resIdBean.isSelect() && created) {
                     //不需要创建findViewById 删除
                     createPsiStatement.delete();
-                    System.err.println("删除:"+createPsiStatement.getText());
+                    System.err.println("删除:" + createPsiStatement.getText());
                 }
                 System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
@@ -224,18 +229,16 @@ public class ClassWriter {
      */
     private boolean methodShouldParams() {
         boolean params = false;
-        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-        PsiClass activityClass = JavaPsiFacade.getInstance(project).findClass("android.app.Activity", scope);
-        PsiClass fragmentClass = JavaPsiFacade.getInstance(project).findClass("android.app.Fragment", scope);
-        PsiClass supportFragmentClass = JavaPsiFacade.getInstance(project).findClass("android.support.v4.app.Fragment", scope);
-        if (activityClass != null && _psiClass.isInheritor(activityClass, false)) {
-            //当前类为activity
-            params = false;
-        } else if (fragmentClass != null && _psiClass.isInheritor(fragmentClass, false)
-                || supportFragmentClass != null && _psiClass.isInheritor(supportFragmentClass, false)) {
+        if (mPsiClassUtils == null) {
+            mPsiClassUtils = new PsiClassUtils(project);
+        }
+        System.out.println(">>>>>>>>是否是Fragment>>>>>>>>>");
+        if(mPsiClassUtils.isFragment(_psiClass)){
             //当前类为fragment
             params = true;
         }
         return params;
     }
+
+
 }

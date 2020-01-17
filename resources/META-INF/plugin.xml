@@ -1,20 +1,21 @@
 <idea-plugin>
   <id>com.zhoug.plugin.android.findviews</id>
   <name>findviews</name>
-  <version>1.0</version>
+  <version>1.1</version>
   <vendor email="564169392@qq.com" url="https://github.com/zhougan870822/findviews">zhoug</vendor>
 
   <description><![CDATA[
-     <li>this plugin use for android stdio</li>
+     <li>this plugin use for android studio</li>
      <li>generate findViewById code </li>
-     <li>support  android library</li>
+     <li>can use in Fragment,Activity,View</li>
+     <li>generate findViewById() in activity or view.findViewById() in fragment</li>
+     <li>support android library</li>
      <li>author is zhoug</li>
     ]]></description>
 
   <change-notes><![CDATA[
      <li>this plugin use for android stdio</li>
-     <li>generate findViewById code </li>
-     <li>support  android library</li>
+     <li>修改 bug 间接继承Fragment时不能添加view.前缀的bug</li>
     ]]>
   </change-notes>
 

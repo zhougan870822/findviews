@@ -207,11 +207,11 @@ public class FindViewsAction extends AnAction {
                 PsiElement element = psiFile.findElementAt(offset);
                 PsiElement element1 = psiFile.findElementAt(offset - 1);
                 //注意光标在R.layout.activity_main的后面时选择的是")" 所以需要判断
-                String text = element.getText();
+                String text = element.getText().trim();
                 String text1 = element1.getText();
                 //文件名
 
-                if (!".".equals(text) && !")".equals(text) && !",".equals(text)) {
+                if (!".".equals(text) && !")".equals(text) && !",".equals(text)&& !"".equals(text)) {
                     psiElement = element;
                 } else {
                     psiElement = element1;
