@@ -51,16 +51,15 @@ public class FindViewsAction extends AnAction {
     private ClassWriter classWriter;
 
 
-
     @Override
     public void update(AnActionEvent anActionEvent) {
         Editor editor = anActionEvent.getData(PlatformDataKeys.EDITOR);
         if (editor != null) {
 //            e.getPresentation().setEnabled(true);
-            PsiFile  psiFile = anActionEvent.getData(PlatformDataKeys.PSI_FILE);
-            if(psiFile!=null && psiFile.getName().endsWith(".java")){
+            PsiFile psiFile = anActionEvent.getData(PlatformDataKeys.PSI_FILE);
+            if (psiFile != null && psiFile.getName().endsWith(".java")) {
                 anActionEvent.getPresentation().setVisible(true);
-            }else{
+            } else {
                 System.out.println("非java文件不显示插件按钮");
                 anActionEvent.getPresentation().setVisible(false);
             }
@@ -80,17 +79,8 @@ public class FindViewsAction extends AnAction {
         module = ModuleUtil.findModuleForFile(psiFile);
 
         //光标下的元素
-        PsiElement psiElement = getPsiElement();
-        if (psiElement == null) {
-            ToastUtils.toastShort(editor, "psiElement=null");
-            return;
-        }
-        //文件名,记住要拼接上后缀
-        String xMlFileName = String.format("%s.xml", psiElement.getText());
-        //查找文件
-        PsiFile xmlFile = getFileByName(xMlFileName);
+        PsiFile xmlFile = getSelectedElement();
         if (xmlFile == null) {
-            ToastUtils.toastShort(editor, "没有找到文件:" + xMlFileName);
             return;
         }
         //遍历文件元素,找到有id的组件
@@ -98,10 +88,10 @@ public class FindViewsAction extends AnAction {
         getResIdBean(xmlFile, resIdBeanList);
 
         if (resIdBeanList.size() == 0) {
-            ToastUtils.toastShort(editor, "没有带id的组件:" + xMlFileName);
+            ToastUtils.toastShort(editor, "没有带id的组件:");
             return;
         }
-        classWriter= new ClassWriter(project,psiFile,resIdBeanList);
+        classWriter = new ClassWriter(project, psiFile, resIdBeanList);
         classWriter.modifyResIdBean();
 
         if (findViewDialog == null) {
@@ -121,8 +111,6 @@ public class FindViewsAction extends AnAction {
         tableModel = ActionUtils.getTableModel(resIdBeanList, tableModelListener);
         findViewDialog.setTableModel(tableModel);
     }
-
-
 
 
     /**
@@ -190,6 +178,39 @@ public class FindViewsAction extends AnAction {
     }
 
     /**
+     * 获取光标选中的文件
+     *
+     * @return
+     */
+    private PsiFile getSelectedElement() {
+        PsiFile xmlFile = null;
+        if (editor != null) {
+            //得到编辑器的光标类
+            CaretModel caretModel = editor.getCaretModel();
+            //程序结构接口
+            //光标开始位置
+            int offset = caretModel.getOffset();
+            if (psiFile != null) {
+                //光标下面的元素(单词)
+                for (int i = -1; i <= 1; i++) {
+                    PsiElement element = psiFile.findElementAt(offset + i);
+                    if (element != null) {
+                        String text = element.getText().trim();
+                        //文件名,记住要拼接上后缀
+                        String xMlFileName = String.format("%s.xml", text);
+                        xmlFile = getFileByName(xMlFileName);
+                    }
+                    if (xmlFile != null) {
+                        return xmlFile;
+                    }
+                }
+            }
+        }
+        ToastUtils.toastShort(editor, "没有找到文件");
+        return xmlFile;
+    }
+
+    /**
      * 获取光标下面的元素
      *
      * @return
@@ -211,7 +232,7 @@ public class FindViewsAction extends AnAction {
                 String text1 = element1.getText();
                 //文件名
 
-                if (!".".equals(text) && !")".equals(text) && !",".equals(text)&& !"".equals(text)) {
+                if (!".".equals(text) && !")".equals(text) && !",".equals(text) && !"".equals(text) && !";".equals(text)) {
                     psiElement = element;
                 } else {
                     psiElement = element1;
