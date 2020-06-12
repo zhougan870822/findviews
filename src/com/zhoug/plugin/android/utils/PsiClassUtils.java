@@ -9,12 +9,14 @@ public class PsiClassUtils {
     public PsiClass activity;
     public PsiClass fragment;
     public PsiClass supportFragment;
+    public PsiClass xFragment;
 
     public PsiClassUtils(Project project) {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         activity = JavaPsiFacade.getInstance(project).findClass("android.app.Activity", scope);
         fragment = JavaPsiFacade.getInstance(project).findClass("android.app.Fragment", scope);
         supportFragment = JavaPsiFacade.getInstance(project).findClass("android.support.v4.app.Fragment", scope);
+        xFragment = JavaPsiFacade.getInstance(project).findClass("androidx.fragment.app.Fragment", scope);
     }
 
     /**
@@ -67,7 +69,8 @@ public class PsiClassUtils {
     public boolean isFragment(PsiClass psiClass){
         if(psiClass!=null){
             if((fragment!=null && psiClass.isInheritor(fragment,false)) ||
-                    (supportFragment!=null && psiClass.isInheritor(supportFragment,false))){
+                    (supportFragment!=null && psiClass.isInheritor(supportFragment,false))||
+                    (xFragment!=null && psiClass.isInheritor(xFragment,false))){
                 return true;
             }else{
                 //判断psiClass的父类是否继承parentClass
